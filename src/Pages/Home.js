@@ -7,6 +7,7 @@ import AreyouGuideCard from '../Components/AreyouGuideCard';
 import BestTours from '../Components/BestTours';
 import BestGuidesRanks from '../Components/BestGuidesRanks';
 import TestimonyCard from '../Components/TestimonyCard';
+import Partenaire from '../Components/Partenaire';
 
 const Container = styled.div`
   padding: 20px;
@@ -40,6 +41,9 @@ function Home() {
       </GapContainer>
       <GapContainer>
         <TestimonyCard />
+      </GapContainer>
+      <GapContainer>
+        <Partenaire />
       </GapContainer>
       <GapContainer>
         <AreyouGuideCard />

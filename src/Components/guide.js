@@ -1,11 +1,123 @@
-// import { useState } from "react";
-// import { useEffect } from "react";
-// import axios from "axios";
-// import Loading from "../Components/Loading";
+import { useState } from "react";
+import { useEffect } from "react";
+import axios from "axios";
+import Loading from "../Components/Loading";
 import { Link } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import StarRatingComponent from "react-star-rating-component";
+import SearchBar from "./SearchBar";
 
+const images = [
+    {
+        "id_img": 1,
+        'photo': 'guides.jpeg',
+
+    },
+    {
+        "id_img": 2,
+        "id_compte": 2,
+    },
+    {
+        "id_img": 3,
+        'photo': 'guides.jpeg',
+    }
+];
+
+function Guide() {
+
+    const [guides, setGuides] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [guidesDetails, setGuidesDetails] = useState([]);
+
+    useEffect(() => {
+        axios.get('http://127.0.0.1:8000/api/guides')
+            .then(response => {
+                setGuides(response.data);
+                setGuidesDetails(response.data);
+                setLoading(false)
+            })
+            .catch(error => {
+                console.error('Error fetching guides:', error);
+                setLoading(true)
+            });
+    }, []);
+
+    if (loading) {
+        return (
+            <Loading />
+        )
+    }
+
+    console.log(typeof guidesDetails);
+    console.log(guidesDetails);
+
+    return (
+        <div className="slide-container">
+            <SearchBar />
+            {Object.keys(guidesDetails).length === 0 ? (
+                <p className="card-text" style={{ color: '#2C3892' }}> No Guide to be found !!</p>
+            ) : (
+                <div style={{ justifyContent: 'center' }}>
+                    {Object.values(guidesDetails).map((g) => (
+                        <div key={g.id_guide} className="card shadow" style={{ border: '0', width: '50rem', backgroundColor: '#FFFFFF', textAlign: 'center', margin: '10px' }}>
+
+                            <div className="card-body" style={{ display: 'flex', alignItems: 'center' }}>
+                                <div className="col-8">
+                                    <div className="row" style={{ marginBottom: '10px' }}>
+                                        <div className="col">
+                                            <h4 className="card-title d-inline" style={{ fontWeight: 'bold', color: '#2C3892' }}>{g.name}</h4>
+                                            <h5 className="card-text d-inline" style={{ color: '#2C3892' }}>{g.country}</h5>
+                                            <img className="d-inline" src={g.photo} alt="flag country" style={{ width: "50px" }} />
+                                        </div>
+                                    </div>
+
+                                    <div className="row" style={{ marginBottom: '10px' }}>
+                                        <div className="col">
+                                            <p className="card-text" style={{ color: '#2C3892', fontSize: "20px", textDecoration: 'underline' }}>{g.email}</p>
+                                            <p className="card-text" style={{ color: '#2C3892', fontSize: "20px" }}>{g.num_tel}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="row" style={{ marginBottom: '10px' }}>
+                                        <div className="col">
+                                            <p className="card-text" style={{ color: '#2C3892', fontSize: "20px", fontWeight: 'bold' }}>+{g.price}$</p>
+                                            <p className="card-text" style={{ color: '#2C3892', fontSize: "20px" }}>
+                                                {g.nom_language && Array.isArray(g.nom_language) ? g.nom_language.join(', ') : ''}
+                                            </p>
+
+                                        </div>
+                                    </div>
+
+                                    <div className="row">
+                                        <div className="col">
+                                            <p className="card-text" style={{ color: '#2C3892', fontSize: "20px", fontWeight: 'bold' }}>Rank: {g.rank}</p>
+                                            <div className="mx-auto shadow" style={{ height: 'auto', width: '6rem', backgroundColor: '#FFFFFF', borderRadius: '25px' }}>
+                                                <StarRatingComponent editing={false} name="Etoile" starCount={5} value={g.evaluation} />
+                                            </div>
+                                            <Button style={{ border: '0', height: '3rem', width: '9rem', backgroundColor: '#51ADE5', color: '#F4F4F4', fontWeight: 'bold', fontSize: 'large' }}>
+                                                <Link to="/" className="nav-link px-2 link-light">Know more</Link>
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+}
+export default Guide;
+
+
+
+
+//{ filteredPrice }
+//const filteredGuides = guidesDetails.filter(g => g.price <= filteredPrice);
+//onSearch={handleSearch}
+
+/*
 const guidesDetails = [
     {
         "id_guide": 1,
@@ -56,77 +168,4 @@ const guidesDetails = [
         "rank": 3
     }
 ];
-
-function Guide() {
-
-    console.log(guidesDetails);
-
-    return (
-        <div className="slide-container">
-            {guidesDetails.length === 0 ? (
-                <p className="card-text" style={{ color: '#2C3892' }}> No Guide to be found !!</p>
-            ) : (
-                <div style={{ justifyContent: 'center' }}>
-                    {guidesDetails.map((g) => (
-                        <div key={g.id_guide} className="card shadow" style={{ border: '0', width: '40rem', backgroundColor: '#FFFFFF', textAlign: 'center', margin: '10px' }}>
-                            <div className="card-body" style={{ display: 'flex', alignItems: 'center' }}>
-                                <div className="mx-auto col-4">
-                                    <img src={g.photo} alt="guide" style={{ borderRadius: "50%", width: "150px", height: "150px", margin: " 0 auto", marginTop: "20px" }} />
-                                </div>
-                                {/* ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */}
-                                <div className="col-8">
-                                    <h4 className="card-title" style={{ fontWeight: 'bold', color: '#2C3892', display: 'inline-block', marginRight: '20px' }}>{g.name}</h4>
-                                    <h5 className="card-text" style={{ color: '#2C3892', display: 'inline-block', marginRight: '20px' }}>{g.country}</h5>
-                                    <img src={g.photo} alt="flag country" style={{ width: "50px", display: 'inline-block', marginLeft: '20px' }} />
-                                    {/* ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */}
-                                    <p className="card-text" style={{ color: '#2C3892', fontSize: "20px", textDecoration: 'underline', display: 'inline-block', marginRight: '50px' }}>{g.email} </p>
-                                    <p className="card-text" style={{ color: '#2C3892', fontSize: "20px", display: 'inline-block' }}>{g.num_tel} </p>
-                                    {/* ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */}
-                                    <p className="card-text" style={{ color: '#2C3892', fontSize: "20px", fontWeight: 'bold', display: 'inline-block', marginRight: '50px' }}>+{g.price}$ </p>
-                                    <p className="card-text" style={{ color: '#2C3892', fontSize: "20px", display: 'inline-block' }}> {g.nom_language.join(', ')} </p>
-                                    {/* ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */}
-                                    <p className="card-text" style={{ color: '#2C3892', fontSize: "20px", fontWeight: 'bold', display: 'inline-block', marginRight: '20px' }}>Rank: {g.rank} </p>
-                                    <div className="mx-auto shadow" style={{ height: 'auto', width: '6rem', backgroundColor: '#FFFFFF', borderRadius: '25px', display: 'inline-block', marginRight: '20px' }}>
-                                        <StarRatingComponent editing={false} name="Etoile" starCount={5} value={g.evaluation} />
-                                    </div>
-                                    <Button style={{ border: '0', height: '3rem', width: '9rem', backgroundColor: '#51ADE5', color: '#F4F4F4', fontWeight: 'bold', fontSize: 'large', display: 'inline-block', marginLeft: '20px' }} >
-                                        <Link to="/" class="nav-link px-2 link-light"> Know more </Link>
-                                    </Button>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            )}
-        </div>
-
-    );
-}
-
-export default Guide;
-
-// const [loading, setLoading] = useState(true);
-// const [guides, setGuides] = useState([]);
-
-// useEffect(() => {
-//     axios.get(`http://localhost:8000/api/guides`)
-//         .then(res => {
-//             console.log(res)
-//             setGuides(res.data.guides);
-//             setLoading(false);
-//         })
-//         .catch(error => {
-//             console.error('Error fetching guides:', error);
-//             setLoading(false);
-//         });
-// }, []);
-
-
-// if (loading) {
-//     return (
-//         <Loading />
-//     )
-// }
-
-// var guidesDetails = '';
-// guidesDetails = guides;
+*/

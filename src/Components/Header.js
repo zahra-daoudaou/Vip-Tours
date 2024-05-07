@@ -124,7 +124,7 @@ function Header() {
             <NavLink to="/forguide">For Guides</NavLink>
           </NavItem>
           <NavItem>
-            <NavLinkBtn to="/singin/on">Sign in / on</NavLinkBtn>
+            <NavLinkBtn to="/singin-signup">Signin/up</NavLinkBtn>
           </NavItem>
         </NavbarNav>
       </Navbar >
